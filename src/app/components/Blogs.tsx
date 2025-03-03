@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { fetchBlogs, BlogPost } from "../services/blogPosts";
+import { fetchBlogs, BlogPost } from "../../services/blogPosts";
 
 interface User {
   id: number;

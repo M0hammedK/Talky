@@ -22,6 +22,7 @@ interface User {
 const BlogDetail = () => {
   const router = useRouter();
   const { id } = router.query; // Access dynamic route parameter 'id' using router.query
+  
 
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
   const [user, setUser] = useState<User | null>(null);

@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import Blogs from "../components/Blogs";
+import Blogs from "./components/Blogs";
 import * as jwt_decode from 'jwt-decode';
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
