@@ -1,10 +1,11 @@
-// components/common/ProtectedRoute.tsx
-import { useEffect } from "react";
+"use client";
+
+import { useEffect, cloneElement, ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children: ReactElement;
   adminOnly?: boolean;
 }
 
@@ -22,7 +23,7 @@ export default function ProtectedRoute({
     } else if (adminOnly && userRole !== "ADMIN") {
       router.push("/");
     }
-  }, [accessToken, userRole, router]);
+  }, [accessToken, userRole, adminOnly, router]);
 
-  return <>{children}</>;
+  return <>{cloneElement(children, { userRole } as any)}</>;
 }

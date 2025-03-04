@@ -14,8 +14,13 @@
   }
 }
 
-body {
+body, html {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+section{
+  @apply flex min-h-[100vh] w-[80vw] md:w-[60vw];
+  
 }
