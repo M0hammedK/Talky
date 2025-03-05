@@ -1,5 +1,6 @@
 "use client";
 
+import ErrorMessage from "@/app/components/ErrorMessage";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,29 +9,32 @@ import React, { useState } from "react";
 export default function Signup() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [password, setPassword] = useState("");
+  const [passwordAgain, setPasswordAgain] = useState("");
   const [error, setError] = useState<string>(""); // Error state
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     // Clear any previous error messages
     setError("");
 
     const userData = { name, email, password };
 
-    const response = axios
+    await axios
       .post("/api/register", userData, {
         headers: {
           "Content-Type": "application/json",
         },
       })
-      .then((response) => {
+      .then((res) => {
         router.push("/login");
       })
-      .catch((error) => {
-        setError(error);
+      .catch((err) => {
+        setError(err.response?.data?.error || "Something went wrong");
+        setIsLoading(false);
       });
   };
   return (
@@ -62,7 +66,7 @@ export default function Signup() {
               >
                 Name
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="mt-1 block rounded-md shadow-sm">
                 <input
                   id="name"
                   placeholder="Mohammed Hasan"
@@ -86,7 +90,7 @@ export default function Signup() {
               >
                 Email address
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="mt-1 block rounded-md shadow-sm">
                 <input
                   id="email"
                   name="email"
@@ -139,8 +143,8 @@ export default function Signup() {
                   name="password"
                   type="password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={passwordAgain}
+                  onChange={(e) => setPasswordAgain(e.target.value)}
                   className={`appearance-none text-black block w-full px-3 py-2 border ${
                     error ? "border-red-500" : "border-gray-300"
                   } rounded-md placeholder-gray-400 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 transition duration-150 ease-in-out sm:text-sm sm:leading-5`}
@@ -149,20 +153,17 @@ export default function Signup() {
             </div>
 
             {/* Error message */}
-            {error && (
-              <div className="mt-4 text-sm text-red-500">
-                <p>{error}</p>
-              </div>
-            )}
+            <ErrorMessage error={error} />
 
             {/* Submit Button */}
             <div className="mt-6">
               <span className="block w-full rounded-md shadow-sm">
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+                  disabled={isLoading}
+                  className="w-full flex disabled:bg-blue-950 justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
                 >
-                  Sign Up
+                  {isLoading ? "submitting..." : "Sign Up"}
                 </button>
               </span>
             </div>

@@ -2,49 +2,39 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ErrorMessage from "@/app/components/ErrorMessage";
+import { error } from "node:console";
+import axios from "axios";
+import { getCookie, setCookie } from "cookies-next";
 
 export default function Login() {
   // Step 1: State to store form data (email and password)
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   // Step 2: Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    setIsLoading(true);
     const credentials = { email, password };
 
-    try {
-      // Step 1: Send POST request to backend for authentication
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(credentials),
-        }
-      );
-
-      // Step 2: Parse the JSON **only once**
-      const result = await response.json();
-
-      if (response.ok) {
-        // Step 3: Store JWT token in localStorage
-        localStorage.setItem("token", result.token);
-
-        alert("Login successful!");
-        // Step 4: Redirect user to home page
+    axios
+      .post("/api/login", credentials, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        localStorage.setItem("accessToken", res.data.data.accessToken);
         router.push("/");
-      } else {
-        alert(`Error: ${result.message}`);
-      }
-    } catch (error: any) {
-      console.error("Error:", error.message);
-      alert("An error occurred during login.");
-    }
+      })
+      .catch((err) => {
+        setError(err.response.data.error || "something wrong");
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -79,7 +69,7 @@ export default function Login() {
               >
                 Email address
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="mt-1 block rounded-md shadow-sm">
                 <input
                   id="email"
                   name="email"
@@ -114,14 +104,17 @@ export default function Login() {
               </div>
             </div>
 
+            {/* Error message */}
+            <ErrorMessage error={error} />
             {/* Submit Button */}
             <div className="mt-6">
               <span className="block w-full rounded-md shadow-sm">
                 <button
+                  disabled={isLoading}
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+                  className="w-full flex disabled:bg-blue-950 justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
                 >
-                  Sign in
+                  {isLoading ? "submitting..." : "Sign Up"}
                 </button>
               </span>
             </div>
