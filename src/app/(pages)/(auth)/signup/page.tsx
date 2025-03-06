@@ -1,10 +1,10 @@
 "use client";
 
-import ErrorMessage from "@/app/components/ErrorMessage";
+import ErrorMessage from "@/app/components/UI/ErrorMessage";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -12,8 +12,19 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState("/userImg.png");
   const [error, setError] = useState<string>(""); // Error state
   const router = useRouter();
+  console.log(previewImage);
+
+  useEffect(() => {
+    const getImage = async () => {
+      const imageUrl = URL.createObjectURL(profileImage as Blob);
+      setPreviewImage(imageUrl);
+    };
+    if (profileImage !== null) getImage();
+  }, [profileImage]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -21,10 +32,15 @@ export default function Signup() {
     // Clear any previous error messages
     setError("");
 
-    const userData = { name, email, password };
-
+    const formData = new FormData();
+    formData.append("profileImage", profileImage as Blob);
+    formData.append(
+      "user",
+      JSON.stringify({ name, email, password, passwordAgain })
+    );
+    
     await axios
-      .post("/api/register", userData, {
+      .post("/api/register", formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -56,8 +72,27 @@ export default function Signup() {
       </div>
 
       <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-4 px-4 shadow sm:px-10">
           <form onSubmit={handleSubmit}>
+            {/* Image */}
+            <div className="mb-4 justify-self-center">
+              <label htmlFor="profileImage" className="cursor-pointer">
+                <img
+                  src={previewImage}
+                  alt="Profile Picture"
+                  width={120}
+                  height={120}
+                  className="image"
+                />
+              </label>
+              <input
+                id="profileImage"
+                type="file"
+                accept=".png,.jpg,.jpeg"
+                className="hidden"
+                onChange={(e: any) => setProfileImage(e.target.files?.[0])}
+              />
+            </div>
             {/* Name */}
             <div>
               <label

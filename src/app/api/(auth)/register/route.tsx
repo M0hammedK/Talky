@@ -1,13 +1,16 @@
-import { UserSchema } from "@/models/userSchema";
+import { userSchema } from "@/models/userSchema";
 import { RegisterUser } from "@/services/UserServices";
 import { ZodErrorToString } from "@/utils/ErrorUtils";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export async function POST(req: Request) {
-  const data = await req.json();
+export async function POST(req: any) {
+  const formData = await req.formData();
+  let img = formData["profileImage"];
+  const user = JSON.parse(formData["user"]);
   try {
-    UserSchema.parse(data);
+    userSchema.parse(user);
+    if (img === null) img = await (await fetch("/userImg.png")).blob();
   } catch (err: any) {
     if (err instanceof ZodError) {
       return NextResponse.json(
@@ -16,12 +19,20 @@ export async function POST(req: Request) {
       );
     }
   }
-
-  const result = await RegisterUser(data);
-
+  const checkedFormData = new FormData();
+  checkedFormData.append("profileImage", img);
+  checkedFormData.append("user", user);
+  const result = await RegisterUser(checkedFormData);
+  console.log(result);
   if (result?.error) {
-    return NextResponse.json({ error: result.error }, { status: result.status });
+    return NextResponse.json(
+      { error: result.error },
+      { status: result.status }
+    );
   }
 
-  return NextResponse.json({ message: "User registered successfully" }, { status: 201 });
+  return NextResponse.json(
+    { message: "User registered successfully" },
+    { status: 201 }
+  );
 }

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ErrorMessage from "@/app/components/ErrorMessage";
+import ErrorMessage from "@/app/components/UI/ErrorMessage";
 import { error } from "node:console";
 import axios from "axios";
 import { getCookie, setCookie } from "cookies-next";
@@ -114,7 +114,7 @@ export default function Login() {
                   type="submit"
                   className="w-full flex disabled:bg-blue-950 justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
                 >
-                  {isLoading ? "submitting..." : "Sign Up"}
+                  {isLoading ? "submitting..." : "Sugn In"}
                 </button>
               </span>
             </div>

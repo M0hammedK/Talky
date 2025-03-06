@@ -1,4 +1,7 @@
+import UserSchema from "@/models/userSchema";
 import axios from "axios";
+import { getCookie } from "cookies-next";
+import { cookies } from "next/headers";
 
 export const RegisterUser = async (data: any) => {
   try {
@@ -38,4 +41,23 @@ export const LoginUser = async (data: any) => {
     }
     return { error: err.message, status: err.response?.status || 500 };
   }
+};
+
+// export const GetToken = async () => {
+//   return (await cookies()).get("accessToken");
+// };
+
+export const GetUser = async () => {
+  let response;
+  await axios
+    .get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getCookie("accessToken")}`,
+      },
+    })
+    .then((res) => {
+      response = res;
+    });
+  return new UserSchema(response!.data);
 };

@@ -3,6 +3,7 @@
 import { useEffect, cloneElement, ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { getCookie } from "cookies-next";
+import { GetToken } from "@/services/UserServices";
 
 interface ProtectedRouteProps {
   children: ReactElement;
@@ -14,16 +15,13 @@ export default function ProtectedRoute({
   adminOnly = false,
 }: ProtectedRouteProps) {
   const router = useRouter();
-  const accessToken = getCookie("accessToken");
-  const userRole = getCookie("userRole");
+  const accessToken = GetToken()
 
   useEffect(() => {
     if (!accessToken) {
       router.push("/login");
-    } else if (adminOnly && userRole !== "ADMIN") {
-      router.push("/");
     }
-  }, [accessToken, userRole, adminOnly, router]);
+  }, [accessToken, adminOnly, router]);
 
-  return <>{cloneElement(children, { userRole } as any)}</>;
+  return <>{cloneElement(children, { accessToken } as any)}</>;
 }

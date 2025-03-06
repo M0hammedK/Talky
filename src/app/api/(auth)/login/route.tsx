@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { UserSchema } from "@/models/userSchema";
+import { userSchema } from "@/models/userSchema";
 import { ZodError } from "zod";
 import { ZodErrorToString } from "@/utils/ErrorUtils";
 import { LoginUser } from "@/services/UserServices";
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
 
   // Simulate setting a cookie after successful login
   try {
-    UserSchema.parse({ ...data, name: "name" });
+    userSchema.parse({ ...data, name: "name" });
   } catch (err: any) {
     if (err instanceof ZodError) {
       return NextResponse.json(

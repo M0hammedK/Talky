@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router'; // Use next/router
-import { format } from 'date-fns';
-import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation"; // Use next/router
+import { format } from "date-fns";
+import { jwtDecode } from "jwt-decode";
 
 // Define the types
 interface BlogPost {
@@ -21,39 +21,40 @@ interface User {
 
 const BlogDetail = () => {
   const router = useRouter();
-  const { id } = router.query; // Access dynamic route parameter 'id' using router.query
-  
+  const { id } = useParams(); // Access dynamic route parameter 'id' using router.query
 
   const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [authorName, setAuthorName] = useState<string>('Unknown Author'); // State for author name
+  const [authorName, setAuthorName] = useState<string>("Unknown Author"); // State for author name
 
   // Fetch user data
   const getUser = async (id: number) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`
+      );
       if (!response.ok) {
-        throw new Error('Failed to fetch user');
+        throw new Error("Failed to fetch user");
       }
       const user: User = await response.json();
       setAuthorName(user.name); // Set the author name
     } catch (error) {
-      console.error('Error fetching user:', error);
-      setAuthorName('Unknown Author'); // Fallback value
+      console.error("Error fetching user:", error);
+      setAuthorName("Unknown Author"); // Fallback value
     }
   };
 
   useEffect(() => {
     // Check if id is available
     if (!id) {
-      console.log('ID is not available yet');
+      console.log("ID is not available yet");
       setLoading(true); // Stay in loading state
       return;
     }
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode<User>(token); // Decode the JWT token
       setUser(decoded); // Set the user state
@@ -61,7 +62,9 @@ const BlogDetail = () => {
 
     // Fetch the blog post by ID
     const fetchBlog = async (id: number): Promise<BlogPost> => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`
+      );
       if (!response.ok) throw new Error(`Failed to fetch blog with id: ${id}`);
       return response.json();
     };
@@ -77,7 +80,7 @@ const BlogDetail = () => {
         }
       } catch (err) {
         setError((err as Error).message);
-        router.push('/404');
+        router.push("/404");
       } finally {
         setLoading(false);
       }
@@ -92,30 +95,33 @@ const BlogDetail = () => {
 
   // Format the createdAt date
   const formattedDate = blogPost.createdAt
-    ? format(new Date(blogPost.createdAt), 'MMMM dd, yyyy HH:mm')
-    : '';
+    ? format(new Date(blogPost.createdAt), "MMMM dd, yyyy HH:mm")
+    : "";
 
   // Delete handler
   const handleDelete = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${blogPost.id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/posts/${blogPost.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response.ok) {
-        alert('Blog post deleted successfully!');
-        router.push('/');
+        alert("Blog post deleted successfully!");
+        router.push("/");
       } else {
-        alert('Failed to delete the blog post.');
+        alert("Failed to delete the blog post.");
       }
     } catch (err) {
-      console.error('Error deleting the post:', err);
+      console.error("Error deleting the post:", err);
     }
   };
 
@@ -124,7 +130,10 @@ const BlogDetail = () => {
       <div className="relative p-6 sm:p-8 w-full max-w-full">
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="px-6 py-4">
-            <a href="#" className="text-indigo-600 hover:text-indigo-800 transition duration-300 text-sm">
+            <a
+              href="#"
+              className="text-indigo-600 hover:text-indigo-800 transition duration-300 text-sm"
+            >
               {/* Add a link text if needed */}
             </a>
             <h1 className="text-gray-900 font-bold text-3xl sm:text-4xl text-center my-4">
@@ -142,7 +151,9 @@ const BlogDetail = () => {
                 >
                   <path d="M256,0C114.837,0,0,114.837,0,256s114.837,256,256,256s256-114.837,256-256S397.163,0,256,0z M277.333,256c0,11.797-9.536,21.333-21.333,21.333h-85.333c-11.797,0-21.333-9.536-21.333-21.333s9.536-21.333,21.333-21.333h64v-128c0-11.797,9.536-21.333,21.333-21.333s21.333,9.536,21.333,21.333V256z"></path>
                 </svg>
-                <span className="ml-2">{format(new Date(blogPost.createdAt), 'MMMM do, yyyy')}</span>
+                <span className="ml-2">
+                  {format(new Date(blogPost.createdAt), "MMMM do, yyyy")}
+                </span>
               </span>
 
               <span className="flex items-center">
@@ -165,7 +176,9 @@ const BlogDetail = () => {
               </span>
             </div>
             <hr className="my-4 border-t-2 border-gray-200" />
-            <p className="text-base leading-8 my-5 text-gray-800">{blogPost.content}</p>
+            <p className="text-base leading-8 my-5 text-gray-800">
+              {blogPost.content}
+            </p>
           </div>
 
           {user && blogPost.authorId === user.userId && (
