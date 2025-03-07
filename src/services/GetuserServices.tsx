@@ -21,7 +21,6 @@ export async function getUser(id: string | number): Promise<User> {
 
     return userData;
   } catch (error) {
-    console.error("Failed to fetch user:", error);
     throw new Error("Could not retrieve user information");
   }
 }

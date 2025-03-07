@@ -16,7 +16,6 @@ export default function Signup() {
   const [previewImage, setPreviewImage] = useState("/userImg.png");
   const [error, setError] = useState<string>(""); // Error state
   const router = useRouter();
-  console.log(previewImage);
 
   useEffect(() => {
     const getImage = async () => {

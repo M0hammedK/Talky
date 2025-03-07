@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
-import Blogs from "../../components/UI/Blogs";
+import Blogs from "../../components/UI/Post";
 
 export default function Home() {
   interface User {

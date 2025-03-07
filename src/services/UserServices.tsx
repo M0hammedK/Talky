@@ -61,3 +61,13 @@ export const GetUser = async () => {
     });
   return new UserSchema(response!.data);
 };
+
+export const GetUserById = async (authorId: string) => {
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/user/${authorId}`
+    );
+    return res.data;
+  } catch (err) {
+  }
+};

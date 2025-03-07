@@ -1,19 +1,30 @@
-export type BlogPost = {
-  id: string;
-  title: string;
-  content: string;
-  authorId:number;
-  createdAt: string;
+import PostSchema from "@/models/postSchema";
+import axios from "axios";
+
+export const fetchBlogs = async (): Promise<PostSchema[]> => {
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post`
+  );
+  if (!response.data) throw new Error("Failed to fetch blogs");
+  return response.data;
 };
 
-export const fetchBlogs = async (): Promise<BlogPost[]> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`);
-  if (!response.ok) throw new Error("Failed to fetch blogs");
-  return response.json();
-};
-export const fetchBlog = async (id: number): Promise<BlogPost> => {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts/${id}`);
-  if (!response.ok) throw new Error(`Failed to fetch blog with id: ${id}`);
-  return response.json();
+export const fetchBlog = async (id: number): Promise<PostSchema> => {
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`
+  );
+  if (!response.data) throw new Error(`Failed to fetch blog with id: ${id}`);
+  return response.data;
 };
 
+export const createBlog = async ({
+  title,
+  content,
+  imagePath,
+}: any): Promise<PostSchema> => {
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post`
+  );
+  if (!response.data) throw new Error(`Failed to create the post`);
+  return response.data;
+};

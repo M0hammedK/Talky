@@ -23,7 +23,6 @@ export async function POST(req: any) {
   checkedFormData.append("profileImage", img);
   checkedFormData.append("user", user);
   const result = await RegisterUser(checkedFormData);
-  console.log(result);
   if (result?.error) {
     return NextResponse.json(
       { error: result.error },

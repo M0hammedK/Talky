@@ -10,7 +10,8 @@ export async function POST(req: Request) {
 
   // Simulate setting a cookie after successful login
   try {
-    userSchema.parse({ ...data, name: "name" });
+    
+    userSchema.parse({ ...data, name: "name", profileImg: 'ans'  });
   } catch (err: any) {
     if (err instanceof ZodError) {
       return NextResponse.json(
@@ -36,6 +37,5 @@ export async function POST(req: Request) {
     path: "/", // Make it accessible to all routes
     maxAge: 60 * 60 * 24 * 7, // 1 week
   });
-  console.log((await cookies()).get("accessToken")?.value);
   return NextResponse.json({ data: result }, { status: 201 });
 }

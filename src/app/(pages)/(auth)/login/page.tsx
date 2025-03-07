@@ -3,9 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ErrorMessage from "@/app/components/UI/ErrorMessage";
-import { error } from "node:console";
 import axios from "axios";
-import { getCookie, setCookie } from "cookies-next";
 
 export default function Login() {
   // Step 1: State to store form data (email and password)
