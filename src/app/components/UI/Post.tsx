@@ -85,7 +85,7 @@ export default function Blogs() {
           className="w-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 mx-4 my-6"
         >
           <img
-            src={blog.imagePath}
+            src={blog.imagePath || '/placeHolder.webo'}
             alt="Blog post thumbnail"
             className="w-full h-64 object-cover rounded-t-xl border-b border-gray-100"
           />
@@ -101,7 +101,7 @@ export default function Blogs() {
             <p className="text-gray-600 mb-5 leading-relaxed">{blog.content}</p>
             <div className="flex items-center gap-3">
               <img
-                src={blog.author?.profileImg}
+                src={blog.author?.profileImg || '/userImg.png'}
                 alt="Author avatar"
                 className="w-8 h-8 rounded-full"
               />
@@ -110,7 +110,7 @@ export default function Blogs() {
               </span>
             </div>
           </div>
-          <Comments postId={Number(blog.id)} />
+          <Comments postId={Number(blog.id)} allComments={blog.comments || []} />
         </div>
       ))}
 

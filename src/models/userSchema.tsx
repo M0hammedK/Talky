@@ -6,7 +6,7 @@ export const userSchema = z.object({
   email: z.string().email(),
   role: z.enum(["ADMIN", "USER"]).default("USER"),
   password: z.string().min(6, "Password most contains at least 6 characters"),
-  profileImg: z.string(),
+  profileImg: z.string()
 });
 
 class UserSchema {
@@ -18,6 +18,7 @@ class UserSchema {
   public profileImg: string;
 
   constructor(data: any) {
+    if(!data['profileImg']) data['profileImg'] = '/userImg.png';
     const parsed = userSchema.parse(data);
     this.id = parsed.id;
     this.name = parsed.name;

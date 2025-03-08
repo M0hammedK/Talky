@@ -15,13 +15,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         await GetUser(token, localStorage.getItem("user"))
           .then((res: any) => {
-            const {createdAt, updatesAt, ...rest} = res
+            const { createdAt, updatesAt, ...rest } = res;
             if (res) setUser(new UserSchema(rest));
           })
           .catch((err) => {
-            console.log(err);
-            if (err.response.status === 401)
-              localStorage.removeItem("accessToken");
+            try {
+              if (err.response.status === 401)
+                localStorage.removeItem("accessToken");
+            } catch (err) {
+              console.log(err);
+            }
           });
       } else setUser(null);
     };
