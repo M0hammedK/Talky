@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ErrorMessage from "@/app/components/UI/ErrorMessage";
@@ -12,7 +12,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) router.push("/");
+  }, []);
   // Step 2: Handle form submission
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -26,8 +28,10 @@ export default function Login() {
         },
       })
       .then((res) => {
+        localStorage.setItem("user", res.data.data.user.id);
         localStorage.setItem("accessToken", res.data.data.accessToken);
         router.push("/");
+        window.location.reload();
       })
       .catch((err) => {
         setError(err.response.data.error || "something wrong");

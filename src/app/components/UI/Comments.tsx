@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createComment } from "@/services/CommentServices";
+import { useAuth } from "../context/AuthContext";
 
 const Comments = ({ postId }: { postId: number }) => {
   const [comments, setComments] = useState<
@@ -7,7 +8,7 @@ const Comments = ({ postId }: { postId: number }) => {
   >([]);
   const [newComment, setNewComment] = useState("");
   const [showComments, setShowComments] = useState(false);
-
+  const {user} = useAuth()
   const handleCreateComment = async () => {
     if (!newComment.trim()) return;
 
@@ -59,7 +60,7 @@ const Comments = ({ postId }: { postId: number }) => {
             <p className="text-gray-500 text-sm">No comments yet.</p>
           )}
           {/* Comment Input */}
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex gap-2" hidden={!user ? true : false}>
             <input
               type="text"
               placeholder="Add a comment..."

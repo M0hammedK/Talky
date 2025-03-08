@@ -3,20 +3,27 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { GetUser } from "@/services/UserServices";
 import UserSchema from "@/models/userSchema";
-import { getCookie } from "cookies-next";
 
 const AuthContext = createContext<{ user?: UserSchema | null }>({});
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<UserSchema | undefined>();
+  const [user, setUser] = useState<UserSchema | null>();
 
   useEffect(() => {
     const getUser = async () => {
-      const token = await getCookie("accessToken");
+      const token = localStorage.getItem("accessToken");
       if (token) {
-        const res = await GetUser();
-        if (res) setUser(res);
-      }
+        await GetUser(token, localStorage.getItem("user"))
+          .then((res: any) => {
+            const {createdAt, updatesAt, ...rest} = res
+            if (res) setUser(new UserSchema(rest));
+          })
+          .catch((err) => {
+            console.log(err);
+            if (err.response.status === 401)
+              localStorage.removeItem("accessToken");
+          });
+      } else setUser(null);
     };
     getUser();
   }, []);

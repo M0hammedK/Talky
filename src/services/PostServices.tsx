@@ -17,13 +17,16 @@ export const fetchBlog = async (id: number): Promise<PostSchema> => {
   return response.data;
 };
 
-export const createBlog = async ({
-  title,
-  content,
-  imagePath,
-}: any): Promise<PostSchema> => {
+export const createPost = async (data: any, token: any) => {
+  console.log("Sending FormData:", [...data.entries()]); // Debugging
   const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/post`
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/add`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
   if (!response.data) throw new Error(`Failed to create the post`);
   return response.data;

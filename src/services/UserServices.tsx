@@ -5,12 +5,13 @@ import { cookies } from "next/headers";
 
 export const RegisterUser = async (data: any) => {
   try {
+    console.log(...data.entries())
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
       data,
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
       }
     );
@@ -38,28 +39,28 @@ export const LoginUser = async (data: any) => {
   } catch (err: any) {
     if (err.response?.status === 404) {
       return { error: "User not exist", status: 404 };
+    } else if (err.response?.status === 400) {
+      return { error: "wrong credentials", status: 400 };
+    } else if (err.response?.status === 404) {
+      return { error: "User not found", status: 404 };
     }
     return { error: err.message, status: err.response?.status || 500 };
   }
 };
 
-// export const GetToken = async () => {
-//   return (await cookies()).get("accessToken");
-// };
-
-export const GetUser = async () => {
+export const GetUser = async (token: any, id: any) => {
   let response;
   await axios
-    .get(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`, {
+    .get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${id}`, {
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${getCookie("accessToken")}`,
+        Authorization: `Bearer ${token}`,
       },
     })
     .then((res) => {
       response = res;
     });
-  return new UserSchema(response!.data);
+  return response!.data;
 };
 
 export const GetUserById = async (authorId: string) => {
@@ -68,6 +69,18 @@ export const GetUserById = async (authorId: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/api/user/${authorId}`
     );
     return res.data;
-  } catch (err) {
-  }
+  } catch (err) {}
+};
+
+export const LogoutUser = async (token: any) => {
+  console.log(token);
+  const respone = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return respone.status;
 };

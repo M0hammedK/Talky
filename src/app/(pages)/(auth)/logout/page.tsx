@@ -1,24 +1,27 @@
 "use client";
 
+import { LogoutUser } from "@/services/UserServices";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function Logout() {
+  const router = useRouter();
   useEffect(() => {
     const logout = async () => {
-      localStorage.clear();
-      const respone = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (respone.ok) {
-        alert("Logged Out");
-        window.location.reload();
-      }
+      await LogoutUser(localStorage.getItem("accessToken"))
+        .then((res) => {
+          if (res === 200) {
+            localStorage.clear();
+            router.push("/login");
+            window.location.reload();
+          } else {
+            router.push("/");
+            window.location.reload();
+          }
+        })
+        .catch((err) => {
+          router.push("/");
+        });
     };
     logout();
   });

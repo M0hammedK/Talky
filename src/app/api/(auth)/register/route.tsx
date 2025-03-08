@@ -6,12 +6,16 @@ import { ZodError } from "zod";
 
 export async function POST(req: any) {
   const formData = await req.formData();
-  let img = formData["profileImage"];
-  const user = JSON.parse(formData["user"]);
+  let img = formData.get("file");
+  const name = formData.get("name");
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const passwordAgain = formData.get("passwordAgain");
   try {
-    userSchema.parse(user);
     if (img === null) img = await (await fetch("/userImg.png")).blob();
+    userSchema.parse({ name, email, password, profileImg: "jh" });
   } catch (err: any) {
+    console.log(err);
     if (err instanceof ZodError) {
       return NextResponse.json(
         { error: ZodErrorToString(err) },
@@ -20,8 +24,10 @@ export async function POST(req: any) {
     }
   }
   const checkedFormData = new FormData();
-  checkedFormData.append("profileImage", img);
-  checkedFormData.append("user", user);
+  checkedFormData.append("file", img);
+  checkedFormData.append("name", name);
+  checkedFormData.append("email", email);
+  checkedFormData.append("password", password);
   const result = await RegisterUser(checkedFormData);
   if (result?.error) {
     return NextResponse.json(

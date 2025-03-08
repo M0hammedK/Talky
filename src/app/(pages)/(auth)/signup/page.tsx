@@ -18,6 +18,10 @@ export default function Signup() {
   const router = useRouter();
 
   useEffect(() => {
+    if (localStorage.getItem("accessToken")) router.push("/");
+  }, []);
+
+  useEffect(() => {
     const getImage = async () => {
       const imageUrl = URL.createObjectURL(profileImage as Blob);
       setPreviewImage(imageUrl);
@@ -32,16 +36,16 @@ export default function Signup() {
     setError("");
 
     const formData = new FormData();
-    formData.append("profileImage", profileImage as Blob);
-    formData.append(
-      "user",
-      JSON.stringify({ name, email, password, passwordAgain })
-    );
-    
+    formData.append("file", profileImage as Blob);
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("passworAgain", passwordAgain);
+
     await axios
       .post("/api/register", formData, {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data", // Important!
         },
       })
       .then((res) => {

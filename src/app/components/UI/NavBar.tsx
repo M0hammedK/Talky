@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
@@ -97,20 +96,20 @@ export default function NavBar() {
                 className="flex items-center justify-center mt-2 bg-black rounded-2xl contain-strict h-28"
                 onClick={() => setIsOpen(false)}
               >
-                <Image
+                <img
                   src={`${user?.profileImg || "/userImg.png"}`}
                   alt="Profile Image"
                   width={100}
                   height={100}
                   className="w-full blur fixed z-0"
-                ></Image>
-                <Image
+                ></img>
+                <img
                   src={`${user?.profileImg || "/userImg.png"}`}
                   alt="Profile Image"
                   width={100}
                   height={100}
                   className="h-full fixed z-10 rounded-md"
-                ></Image>
+                ></img>
               </div>
               <h1 className="w-full mt-2 ps-4">
                 {user?.name || "Mohammed Al-Kaf"}
@@ -181,26 +180,11 @@ export default function NavBar() {
               ) : (
                 <div>
                   <Link
-                    href="./createpost"
-                    className="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Image
-                      width="25"
-                      height="25"
-                      style={{ marginRight: "8px" }}
-                      src="https://img.icons8.com/ios-glyphs/30/FFFFFF/create-new.png"
-                      alt="create-new"
-                    />
-                    Create new Post
-                  </Link>
-
-                  <Link
                     href="/logout"
                     className="flex items-center px-4 py-2 mt-2 text-gray-100 hover:bg-gray-400 hover:bg-opacity-25 rounded-2xl"
                     onClick={() => setIsOpen(false)}
                   >
-                    <Image
+                    <img
                       width="30"
                       height="30"
                       style={{ marginRight: "8px" }}
