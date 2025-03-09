@@ -32,6 +32,7 @@ declare global {
       login(email: string, password: string): Chainable<void>;
       attachFile(filePath: string): Chainable<JQuery<HTMLElement>>;
       attachFile(options: { fileContent: string, fileName: string, mimeType: string }): Chainable<JQuery<HTMLElement>>;
+      
       // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
       // visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>

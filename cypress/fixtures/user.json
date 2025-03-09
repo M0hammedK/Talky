@@ -6,7 +6,7 @@
   },
   "newUser": {
     "name": "New Test User",
-    "email": "newtestuser@example.com",
+    "email": "testuser1@example.com",
     "password": "password123"
   }
 }

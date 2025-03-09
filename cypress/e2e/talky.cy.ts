@@ -6,8 +6,10 @@ describe('Talky Application E2E Tests', () => {
 
   it('should allow a user to register', () => {
     cy.fixture('user').then((userData) => {
+      const timestamp = Date.now();
+      const uniqueEmail = `testuser+${timestamp}@example.com`;
       const { newUser } = userData;
-      
+
       // Visit the signup page
       cy.visit('/signup');
       
@@ -16,7 +18,7 @@ describe('Talky Application E2E Tests', () => {
       
       // Fill out the registration form
       cy.get('input[name="name"]').type(newUser.name);
-      cy.get('input[name="email"]').type(newUser.email);
+      cy.get('input[name="email"]').type(uniqueEmail);
       cy.get('input[name="password"]').first().type(newUser.password);
       cy.get('input[name="password"]').last().type(newUser.password);
       
@@ -62,7 +64,6 @@ describe('Talky Application E2E Tests', () => {
   });
 
   it('should display posts on the home page', () => {
-    // Login first
     cy.fixture('user').then((userData) => {
       const { validUser } = userData;
       cy.login(validUser.email, validUser.password);
@@ -82,22 +83,26 @@ describe('Talky Application E2E Tests', () => {
   });
 
   it('should allow a user to create a new post', () => {
-    // Login first
     cy.fixture('user').then((userData) => {
       const { validUser } = userData;
       cy.login(validUser.email, validUser.password);
       
       // Visit the home page
-      cy.visit('/');
+      cy.intercept('POST', '/api/login').as('loginRequest');
+      
+      // Wait for the login request to complete
+      
+      // Verify redirection to home page
+      cy.url().should('eq', Cypress.config().baseUrl + '/');
       
       // Click the create post button
-      cy.get('button.fixed.bottom-6.right-6').click();
+      cy.get('button.fixed.bottom-6.right-6').should('be.visible').click();
       
       // Check if the create post modal is visible
       cy.contains('Create New Post').should('be.visible');
       
       // Upload an image
-      cy.fixture('test-image.jpg', 'base64').then(fileContent => {
+      cy.fixture('test-image.jpg', 'base64').then((fileContent) => {
         cy.get('input[id="profileImage"]').attachFile({
           fileContent,
           fileName: 'test-image.jpg',
@@ -114,10 +119,45 @@ describe('Talky Application E2E Tests', () => {
       cy.contains('button', 'Post').click();
       
       // Wait for the post creation to complete
-      cy.wait('@createPost').its('response.statusCode').should('eq', 200);
+      cy.wait('@createPost').its('response.statusCode').should('eq', 201);
       
       // Verify the new post appears in the feed
       cy.contains(postContent).should('be.visible');
+    });
+    
+    
+  });
+  it('should allow a user to add a comment on a post', () => {
+    cy.fixture('user').then((userData) => {
+      const { validUser } = userData;
+      cy.login(validUser.email, validUser.password);
+
+      cy.intercept('POST', '/api/login').as('loginRequest');
+      
+      // Wait for the login request to complete
+      
+      // Verify redirection to home page
+      cy.url().should('eq', Cypress.config().baseUrl + '/');
+      
+      // Click the create post button
+      
+      // Visit the home page
+      
+      // Ensure posts are loaded
+      cy.get('div.bg-white.rounded-xl').first().should('be.visible');
+      
+      // Click on the comment button (if it's hidden)
+      cy.contains('Show comments').click({ force: true });
+  
+      // Type a new comment
+      const commentText = 'This is a Cypress test comment';
+      cy.get('input[placeholder="Add a comment..."]').type(commentText);
+  
+      // Submit the comment
+      cy.get('button.bg-blue-600').click();
+  
+      // Verify the comment appears in the comments section
+      cy.contains(commentText).should('be.visible');
     });
   });
 });
