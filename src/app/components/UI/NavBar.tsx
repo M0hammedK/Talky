@@ -97,14 +97,14 @@ export default function NavBar() {
                 onClick={() => setIsOpen(false)}
               >
                 <img
-                  src={`${user?.profileImg || "/userImg.png"}`}
+                  src="/userImg.png"
                   alt="Profile Image"
                   width={100}
                   height={100}
                   className="w-full blur fixed z-0"
                 ></img>
                 <img
-                  src={`${user?.profileImg || "/userImg.png"}`}
+                  src="/userImg.png"
                   alt="Profile Image"
                   width={100}
                   height={100}

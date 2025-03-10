@@ -1,17 +1,13 @@
-import UserSchema from "@/models/userSchema";
 import axios from "axios";
-import { getCookie } from "cookies-next";
-import { cookies } from "next/headers";
 
 export const RegisterUser = async (data: any) => {
   try {
-    console.log(...data.entries())
     const response = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}/api/auth/signup`,
       data,
       {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -73,7 +69,6 @@ export const GetUserById = async (authorId: string) => {
 };
 
 export const LogoutUser = async (token: any) => {
-  console.log(token);
   const respone = await axios.get(
     `${process.env.NEXT_PUBLIC_API_URL}/api/auth/logout`,
     {

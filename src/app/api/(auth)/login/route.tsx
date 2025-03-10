@@ -10,8 +10,7 @@ export async function POST(req: Request) {
 
   // Simulate setting a cookie after successful login
   try {
-    
-    userSchema.parse({ ...data, name: "name", profileImg: 'ans'  });
+    userSchema.parse({ ...data, name: "name" });
   } catch (err: any) {
     if (err instanceof ZodError) {
       return NextResponse.json(

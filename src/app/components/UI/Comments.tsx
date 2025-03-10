@@ -2,10 +2,17 @@ import { useState } from "react";
 import { createComment } from "@/services/CommentServices";
 import { useAuth } from "../context/AuthContext";
 
-const Comments = ({ postId, allComments }: { postId: number; allComments: any[] }) => {
-  const [comments, setComments] = useState<
-    { content: string; user: { name: string; profileImg: string } }[]
-  >(allComments);
+const Comments = ({
+  postId,
+  allComments,
+}: {
+  postId: number;
+  allComments: any[];
+}) => {
+  const [comments, setComments] =
+    useState<{ content: string; user: { name: string; profileImg: string } }[]>(
+      allComments
+    );
   const [content, setContent] = useState("");
   const [showComments, setShowComments] = useState(false);
   const { user } = useAuth();
@@ -20,9 +27,7 @@ const Comments = ({ postId, allComments }: { postId: number; allComments: any[] 
           setContent(""); // Clear input after successful comment
         }
       })
-      .catch((err) => {
-        console.error("Comment creation error:", err);
-      });
+      .catch((err) => {});
   };
 
   return (
@@ -45,12 +50,14 @@ const Comments = ({ postId, allComments }: { postId: number; allComments: any[] 
                   className="mb-2 p-2 border-b last:border-none flex gap-3 items-start"
                 >
                   <img
-                    src={comment.user.profileImg || "/userImg.png"}
+                    src={"/userImg.png"}
                     alt={comment.user.name}
                     className="w-8 h-8 rounded-full"
                   />
                   <div>
-                    <span className="font-medium text-gray-700">{comment.user.name}</span>
+                    <span className="font-medium text-gray-700">
+                      {comment.user.name}
+                    </span>
                     <p className="text-gray-700">{comment.content}</p>
                   </div>
                 </div>

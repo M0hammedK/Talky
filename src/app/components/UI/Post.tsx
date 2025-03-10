@@ -6,15 +6,14 @@ import PostSchema from "@/models/postSchema";
 import Comments from "./Comments";
 import { useAuth } from "../context/AuthContext";
 
-export default function Blogs() {
+export default function Post() {
   const [blogs, setBlogs] = useState<PostSchema[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("/placeHolder.webp");
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [newPost, setNewPost] = useState({ title: "", content: "" });
+  const [content, setContent] = useState("");
   const { user } = useAuth();
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -29,36 +28,15 @@ export default function Blogs() {
     loadData();
   }, []);
 
-  // Handle image preview
-  useEffect(() => {
-    if (profileImage) {
-      const imageUrl = URL.createObjectURL(profileImage);
-      setPreviewImage(imageUrl);
-
-      return () => URL.revokeObjectURL(imageUrl); // Clean up memory
-    }
-  }, [profileImage]);
-
   const handleCreatePost = async () => {
-    if (!newPost.content.trim() || !profileImage) {
-      alert("Content and image are required!");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("user", (user?.id!).toString());
-    formData.append("content", newPost.content);
-    formData.append("file", profileImage);
-    console.log("Sending FormData:", [...formData.entries()]); // Debugging
     try {
       const createdPost = await createPost(
-        formData,
+        { user: user?.id, content },
         localStorage.getItem("accessToken")
       );
       setBlogs([createdPost, ...blogs]); // Prepend new post
       setIsModalOpen(false);
-      setNewPost({ title: "", content: "" });
-      setProfileImage(null);
-      setPreviewImage("/placeHolder.webp");
+      setContent("");
     } catch (err) {
       alert("Error creating post");
     }
@@ -70,7 +48,6 @@ export default function Blogs() {
         Error: {error}
       </p>
     );
-
   return (
     <section className="flex flex-col gap-6 p-4">
       {loading && (
@@ -85,7 +62,7 @@ export default function Blogs() {
           className="w-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 mx-4 my-6"
         >
           <img
-            src={blog.imagePath || '/placeHolder.webo'}
+            src={"/placeHolder.webp"}
             alt="Blog post thumbnail"
             className="w-full h-64 object-cover rounded-t-xl border-b border-gray-100"
           />
@@ -101,7 +78,7 @@ export default function Blogs() {
             <p className="text-gray-600 mb-5 leading-relaxed">{blog.content}</p>
             <div className="flex items-center gap-3">
               <img
-                src={blog.author?.profileImg || '/userImg.png'}
+                src={"/userImg.png"}
                 alt="Author avatar"
                 className="w-8 h-8 rounded-full"
               />
@@ -110,7 +87,10 @@ export default function Blogs() {
               </span>
             </div>
           </div>
-          <Comments postId={Number(blog.id)} allComments={blog.comments || []} />
+          <Comments
+            postId={Number(blog.id)}
+            allComments={blog.comments || []}
+          />
         </div>
       ))}
 
@@ -137,30 +117,19 @@ export default function Blogs() {
 
               {/* Image Upload */}
               <div className="w-full mb-4">
-                <label htmlFor="profileImage" className="cursor-pointer">
+                <label htmlFor="profileImage">
                   <img
-                    src={previewImage}
+                    src={"/placeHolder.webp"}
                     alt="Selected Image"
                     className="w-full max-w-[90vw] max-h-[90vw] object-cover rounded-lg border"
                   />
                 </label>
-                <input
-                  id="profileImage"
-                  type="file"
-                  accept="image/png, image/jpeg"
-                  className="hidden"
-                  onChange={(e) =>
-                    setProfileImage(e.target.files ? e.target.files[0] : null)
-                  }
-                />
               </div>
 
               <textarea
                 placeholder="Write something..."
-                value={newPost.content}
-                onChange={(e) =>
-                  setNewPost({ ...newPost, content: e.target.value })
-                }
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
                 className="w-full h-24 p-2 border text-gray-900 rounded mb-2"
               />
 
@@ -168,9 +137,7 @@ export default function Blogs() {
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
-                    setProfileImage(null);
-                    setPreviewImage("/placeHolder.webp");
-                    setNewPost({ title: "", content: "" });
+                    setContent("");
                   }}
                   className="px-4 py-2 bg-gray-400 rounded hover:bg-gray-500"
                 >

@@ -12,8 +12,6 @@ export default function Signup() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState("/userImg.png");
   const [error, setError] = useState<string>(""); // Error state
   const router = useRouter();
 
@@ -21,33 +19,22 @@ export default function Signup() {
     if (localStorage.getItem("accessToken")) router.push("/");
   }, []);
 
-  useEffect(() => {
-    const getImage = async () => {
-      const imageUrl = URL.createObjectURL(profileImage as Blob);
-      setPreviewImage(imageUrl);
-    };
-    if (profileImage !== null) getImage();
-  }, [profileImage]);
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
     // Clear any previous error messages
     setError("");
 
-    const formData = new FormData();
-    formData.append("file", profileImage as Blob);
-    formData.append("name", name);
-    formData.append("email", email);
-    formData.append("password", password);
-    formData.append("passworAgain", passwordAgain);
-
     await axios
-      .post("/api/register", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data", // Important!
-        },
-      })
+      .post(
+        "/api/register",
+        { name, email, password, passwordAgain },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
       .then((res) => {
         router.push("/login");
       })
@@ -79,22 +66,15 @@ export default function Signup() {
           <form onSubmit={handleSubmit}>
             {/* Image */}
             <div className="mb-4 justify-self-center">
-              <label htmlFor="profileImage" className="cursor-pointer">
+              <label htmlFor="profileImage">
                 <img
-                  src={previewImage}
+                  src={"/userImg.png"}
                   alt="Profile Picture"
                   width={120}
                   height={120}
                   className="image"
                 />
               </label>
-              <input
-                id="profileImage"
-                type="file"
-                accept=".png,.jpg,.jpeg"
-                className="hidden"
-                onChange={(e: any) => setProfileImage(e.target.files?.[0])}
-              />
             </div>
             {/* Name */}
             <div>

@@ -22,9 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             try {
               if (err.response.status === 401)
                 localStorage.removeItem("accessToken");
-            } catch (err) {
-              console.log(err);
-            }
+            } catch (err) {}
           });
       } else setUser(null);
     };

@@ -18,7 +18,6 @@ export const fetchBlog = async (id: number): Promise<PostSchema> => {
 };
 
 export const createPost = async (data: any, token: any) => {
-  console.log("Sending FormData:", [...data.entries()]); // Debugging
   const response = await axios.post(
     `${process.env.NEXT_PUBLIC_API_URL}/api/post/add`,
     data,
@@ -28,6 +27,7 @@ export const createPost = async (data: any, token: any) => {
       },
     }
   );
+
   if (!response.data) throw new Error(`Failed to create the post`);
   return response.data;
 };
